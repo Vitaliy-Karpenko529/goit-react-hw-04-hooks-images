@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import styles from './Modal.module.css';
 import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
@@ -6,15 +6,21 @@ import { createPortal } from 'react-dom';
 const modalRoot = document.querySelector('#modal-root');
 
 const Modal = ({ onClose, onLoad, src, alt }) => {
-  useEffect(() => {
-    const closePictureByEscape = e => {
-      if (e.code !== 'Escape') {
+
+    const closePictureByEscape = useCallback((e) => {
+      if (e.code === 'Escape') {
         onClose();
       }
-    };
+    },[onClose])
+
+
+  useEffect(() => {
     window.addEventListener('keydown', closePictureByEscape);
-    return () => window.removeEventListener('keydown', closePictureByEscape);
-  }, [onClose]);
+    return () =>{
+      window.removeEventListener('keydown', closePictureByEscape)
+    }
+  },[closePictureByEscape])
+
 
   const closePicture = e => {
     if (e.target === e.currentTarget) {
@@ -29,7 +35,7 @@ const Modal = ({ onClose, onLoad, src, alt }) => {
   return createPortal(
     <div className={styles.Overlay} onClick={closePicture}>
       <div className={styles.Modal} onLoad={pictureLoaded}>
-        <img className={styles.Image} src={src} alt={alt}></img>
+        <img className={styles.Image} src={src} alt={alt} />
       </div>
     </div>,
     modalRoot,

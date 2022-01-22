@@ -34,7 +34,6 @@ function App() {
       return;
     }
     setIsLoading(true);
-
     API.fetchPicturesApi(query, page)
       .then(({ hits }) => {
         if (hits.length === 0) {
@@ -54,11 +53,11 @@ function App() {
       })
 
       .catch(error => setError('Please, try again'))
-      .finally(setIsLoading(false));
+      .finally(() => setIsLoading(false));
   }, [page, query]);
 
   const onLoadMorePictures = () => {
-    setPage(prevState => prevState + 1);
+    setPage(page + 1);
     onScroll();
   };
 
@@ -71,11 +70,10 @@ function App() {
     }, 1000);
   };
 
-  const onOpenModal = e => {
-    e.preventDeafult();
-    setModalPictures(e.target.dataset.largeImageURL);
+  const onOpenModal = (largeImageURL, tags) => {
+    setModalPictures(largeImageURL);
     setOpenModal(true);
-    setAlt(e.target.alt);
+    setAlt(tags);
   };
 
   const onCloseModal = () => setOpenModal(false);
@@ -83,16 +81,21 @@ function App() {
   return (
     <div className={styles.App}>
       <Searchbar onSubmit={onFormSubmit} />
-      {isLoading && <Load />}
       {pictures.length > 0 && !error && (
         <>
           <ImageGallery openModal={onOpenModal} pictures={pictures} />
+          {isLoading && <Load />}
           <Button fetchPicturesApi={onLoadMorePictures} status={activeButton} />
         </>
       )}
 
       {openModal && (
-        <Modal onClose={onCloseModal} src={modalPictures} alt={alt} />
+        <Modal
+          onClose={onCloseModal}
+          onLoad={setIsLoading}
+          src={modalPictures}
+          alt={alt}
+        />
       )}
 
       {error && <p className={styles.error}>{error}</p>}

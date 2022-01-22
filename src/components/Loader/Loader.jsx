@@ -1,8 +1,9 @@
-import Loader from 'react-loader-spinner';
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import {Oval} from 'react-loader-spinner';
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
-function Load() {
-  return <Loader type="ThreeDots" color="#00BFFF" height={85} width={85} />;
-}
+const Load = () => (
+    <Oval heigth="100" width="100" color="grey" arialLabel="loading" />
+)
+
 
 export default Load;
